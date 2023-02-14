@@ -1,9 +1,6 @@
 package com.project.board.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -24,7 +21,8 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @Builder
-    public Member(String email, String password, String nickname) {
+    public Member(Long id, String email, String password, String nickname) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
