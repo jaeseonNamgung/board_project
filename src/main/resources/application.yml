@@ -13,8 +13,9 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
-logging:
-  level:
-    org:
-      hibernate:
-        sql: debug
+        show_sql: true
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        sql: debug
