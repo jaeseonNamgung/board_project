@@ -1,17 +1,13 @@
 package com.project.board.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString(of = {"content"})
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue
@@ -23,9 +19,24 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "answer_id")
+    private Answer answer;
+
     @Builder
-    public Comment(String content, Member member) {
+    public Comment(String content, Member member, Answer answer) {
         this.content = content;
         this.member = member;
+        if(answer != null){
+            changeAnswer(answer);
+        }
+    }
+
+    private void changeAnswer(Answer answer) {
+        if(this.answer != null){
+            this.answer.getComments().remove(this);
+        }
+        this.answer = answer;
+        answer.getComments().add(this);
     }
 }
