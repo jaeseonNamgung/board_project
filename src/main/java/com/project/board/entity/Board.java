@@ -1,5 +1,7 @@
 package com.project.board.entity;
 
+import com.project.board.dto.BoardDto;
+import com.project.board.type.Category;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,6 +16,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString(of = {"title", "content", "tagName", "hit", "countVisit", "category"})
 public class Board {
 
     @Id
@@ -25,6 +28,8 @@ public class Board {
     private String tagName;
     private Integer hit;
     private Integer countVisit;
+    @Enumerated(value = EnumType.STRING)
+    private Category category;
 
     @CreatedDate
     LocalDateTime createdDate;
@@ -40,12 +45,45 @@ public class Board {
 
 
     @Builder
-    public Board(String title, String content,String tagName, int hit, int countVisit, Member member) {
+    public Board(Long id, String title, String content, String tagName, int hit, int countVisit, Category category, Member member) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.hit = hit;
         this.tagName = tagName;
         this.countVisit = countVisit;
+        this.category = category;
         this.member = member;
+    }
+    @Builder
+    public Board(String title, String content, String tagName, Category category) {
+        this.title = title;
+        this.content = content;
+        this.tagName = tagName;
+        this.category = category;
+    }
+
+    public static Board of(Long id, String title, String content, String tagName, int hit, int countVisit, Category category, Member member){
+        return Board.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .tagName(tagName)
+                .hit(hit)
+                .countVisit(countVisit)
+                .category(category)
+                .countVisit(countVisit)
+                .member(member)
+                .build();
+    }
+
+
+
+    public Board update(BoardDto board){
+        return Board.builder()
+                .title(board.title())
+                .content(board.content())
+                .category(board.category())
+                .build();
     }
 }
