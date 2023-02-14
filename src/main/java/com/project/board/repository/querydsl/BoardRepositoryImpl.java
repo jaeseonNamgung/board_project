@@ -3,6 +3,7 @@ package com.project.board.repository.querydsl;
 import com.project.board.entity.Board;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -10,11 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QuerydslUtils;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.project.board.entity.QBoard.board;
@@ -28,8 +28,7 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
         JPAQuery<Board> query = queryFactory
                 .selectFrom(board)
                 .where(
-                        board.title.contains(word)
-                                .or(board.content.contains(word))
+                        titleOrContentContains(word)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
@@ -53,4 +52,9 @@ public class BoardRepositoryImpl implements BoardRepositoryCustom {
                                 .or(board.content.contains(word)));
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
 }
+
+    private BooleanExpression titleOrContentContains(String word) {
+      return StringUtils.hasText(word)?
+              board.title.contains(word).or(board.content.contains(word)):null;
+    }
 }
