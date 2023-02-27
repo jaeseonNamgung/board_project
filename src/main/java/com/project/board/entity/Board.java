@@ -16,11 +16,11 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@ToString(of = {"title", "content", "tagName", "hit", "countVisit", "category"})
+@ToString(of = {"title", "content", "tagName", "hit", "countVisit", "category", "member"})
 public class Board {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
     private Long id;
     private String title;

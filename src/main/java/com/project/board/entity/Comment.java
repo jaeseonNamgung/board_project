@@ -10,7 +10,7 @@ import javax.persistence.*;
 @ToString(of = {"content"})
 public class Comment extends BaseEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long id;
     private String content;
@@ -24,7 +24,8 @@ public class Comment extends BaseEntity {
     private Answer answer;
 
     @Builder
-    public Comment(String content, Member member, Answer answer) {
+    public Comment(Long id, String content, Member member, Answer answer) {
+        this.id = id;
         this.content = content;
         this.member = member;
         if(answer != null){
