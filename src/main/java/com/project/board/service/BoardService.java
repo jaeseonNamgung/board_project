@@ -3,14 +3,17 @@ package com.project.board.service;
 import com.project.board.dto.BoardDto;
 import com.project.board.dto.BoardRequest;
 import com.project.board.dto.BoardResponse;
+import com.project.board.dto.MemberDto;
 import com.project.board.entity.Board;
 import com.project.board.entity.Member;
 import com.project.board.exception.GeneralException;
 import com.project.board.repository.BoardRepository;
 import com.project.board.repository.MemberRepository;
+import com.project.board.type.Category;
 import com.project.board.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +27,17 @@ public class BoardService {
     private final MemberRepository memberRepository;
 
     // 저장
+    @Transactional
     public Boolean createBoard(BoardDto boardDto) {
 
         if(boardDto == null){
             return false;
         }
 
-        Member member = memberRepository.findById(boardDto.memberDto().id())
-                        .orElseThrow(()->new GeneralException(ErrorCode.INTERNAL_ERROR));
-        boardRepository.save(boardDto.toBoard(member));
+        MemberDto memberDto = memberRepository.findById(boardDto.memberDto().id())
+                            .map(MemberDto::fromMember)
+                            .orElseThrow(()->new GeneralException(ErrorCode.INTERNAL_ERROR));
+        boardRepository.save(boardDto.toBoard());
         return true;
     }
 
@@ -49,6 +54,7 @@ public class BoardService {
         return true;
     }
 
+    @Transactional
     public Boolean deleteBoard(Long boardId) {
         if(boardId == null){
             throw new GeneralException(ErrorCode.INTERNAL_ERROR);
@@ -67,5 +73,12 @@ public class BoardService {
             return boardRepository.findAll(pageable).map(BoardResponse::fromResponse);
         }
         return boardRepository.searchBoard(word, pageable).map(BoardResponse::fromResponse);
+    }
+
+    public Page<BoardResponse> getBoardCategory(Category category, Pageable pageable) {
+        if(category == null || pageable == null){
+            throw new GeneralException(ErrorCode.INTERNAL_ERROR);
+        }
+       return boardRepository.findByCategory(category, pageable).map(BoardResponse::fromResponse);
     }
 }
