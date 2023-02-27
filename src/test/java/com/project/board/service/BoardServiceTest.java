@@ -13,6 +13,11 @@ import com.project.board.type.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ArgumentsSources;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,6 +26,7 @@ import org.springframework.data.domain.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,6 +42,50 @@ class BoardServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @DisplayName("[Service] 카테고리 조회- 성공 테스트")
+    @Test
+    void categorySelectTest(){
+        // given
+        Category category = Category.QUESTION_ANSWER;
+        PageRequest pageRequest =
+                PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        given(boardRepository.findByCategory(any(Category.class), any(PageRequest.class)))
+                .willReturn(Page.empty());
+        // when
+        Page<BoardResponse> result = sut.getBoardCategory(category, pageRequest);
+
+        // then
+
+        assertThat(result).isInstanceOf(Page.class);
+        assertThat(result).hasSize(0);
+        then(boardRepository).should(times(1)).findByCategory(any(Category.class), any(PageRequest.class));
+
+    }
+    @DisplayName("[Service] 카테고리 조회 - 실패 테스트")
+    @ParameterizedTest
+    @MethodSource
+    void categorySelectTest2(Category category, PageRequest pageRequest){
+        // given
+        // when
+        Throwable throwable = catchThrowable(
+                () -> sut.getBoardCategory(category, pageRequest));
+
+        // then
+
+        assertThat(throwable).isInstanceOf(GeneralException.class);
+        assertThat(throwable).hasMessageContaining(ErrorCode.INTERNAL_ERROR.getMessage());
+    }
+
+    static Stream<Arguments> categorySelectTest2(){
+        Category category = Category.QUESTION_ANSWER;
+        PageRequest pageRequest =
+                PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdDate"));
+        return Stream.of(
+                Arguments.arguments(null, pageRequest),
+                Arguments.arguments(category, null),
+                Arguments.arguments(null, null)
+        );
+    }
     
     @DisplayName("[Service] 게시글 저장 - 성공 테스트")
     @Test
