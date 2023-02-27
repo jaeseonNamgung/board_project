@@ -1,6 +1,6 @@
 package com.project.board.controller.error;
 
-import com.project.board.controller.dto.ApiErrorResponse;
+import com.project.board.dto.ApiErrorResponse;
 import com.project.board.type.ErrorCode;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
