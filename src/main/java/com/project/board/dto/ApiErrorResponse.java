@@ -1,13 +1,19 @@
-package com.project.board.controller.dto;
+package com.project.board.dto;
 
 import com.project.board.type.ErrorCode;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public record ApiErrorResponse(
-        Boolean success,
-        String errorCode,
-        String message
-) {
+@Getter
+@EqualsAndHashCode
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public class ApiErrorResponse{
+
+    private final Boolean success;
+    private final String errorCode;
+    private final String message;
 
     public static ApiErrorResponse of(Boolean success, String errorCode, String message){
         return new ApiErrorResponse(success, errorCode, message);

@@ -32,4 +32,6 @@ public record BoardResponse(
                 board.getCategory()
         );
     }
+
+
 }
