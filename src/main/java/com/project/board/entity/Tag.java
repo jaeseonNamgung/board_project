@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class Tag extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tag_id")
     private Long id;
     private String tagName;
