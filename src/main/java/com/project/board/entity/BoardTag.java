@@ -13,7 +13,7 @@ import javax.persistence.*;
 public class BoardTag extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_tag_id")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
